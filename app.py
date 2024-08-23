@@ -14,7 +14,7 @@ def connect_db():
     )
 
 # Funzione per eseguire query sul database
-def fluencyhelper_query(query, params=()):
+def queryToDb_query(query, params=()):
     conn = connect_db()
     cursor = conn.cursor()
     cursor.execute(query, params)
@@ -30,18 +30,17 @@ def fluencyhelper_query(query, params=()):
     conn.close()
     return result
 
-# Endpoint per eseguire query SQL
-@app.route('/fluencyhelper', methods=['POST'])
-def fluencyhelper():
+@app.route('/', methods=['POST'])
+def queryToDb():
     data = request.json
-    queries = data.get('queries', [])  # Aspettati un array di oggetti query
+    queries = data.get('queries', [])
     
     results = []
     try:
         for item in queries:
             query = item.get('query')
             params = item.get('params', ())
-            result = fluencyhelper_query(query, params)
+            result = queryToDb_query(query, params)
             results.append({"query": query, "result": result})
         
         return jsonify({"success": True, "results": results})
